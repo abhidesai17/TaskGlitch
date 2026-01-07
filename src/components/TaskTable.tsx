@@ -3,14 +3,14 @@ import { Box, Button, Card, CardContent, IconButton, Stack, Table, TableBody, Ta
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { DerivedTask, Task } from '@/types';
+import { DerivedTask, Task, TaskDraft } from '@/types';
 import { formatROI } from '@/utils/logic';
 import TaskForm from '@/components/TaskForm';
 import TaskDetailsDialog from '@/components/TaskDetailsDialog';
 
 interface Props {
   tasks: DerivedTask[];
-  onAdd: (payload: Omit<Task, 'id'>) => void;
+  onAdd: (payload: TaskDraft) => void;
   onUpdate: (id: string, patch: Partial<Task>) => void;
   onDelete: (id: string) => void;
 }
