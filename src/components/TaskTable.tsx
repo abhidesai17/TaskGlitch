@@ -22,10 +22,12 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
   const existingTitles = useMemo(() => tasks.map(t => t.title), [tasks]);
 
   const handleAddClick = () => {
+    setDetails(null);
     setEditing(null);
     setOpenForm(true);
   };
   const handleEditClick = (task: Task) => {
+    setDetails(null);
     setEditing(task);
     setOpenForm(true);
   };
@@ -85,12 +87,19 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                   <TableCell align="right">
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
                       <Tooltip title="Edit">
-                        <IconButton onClick={() => handleEditClick(t)} size="small">
+                        <IconButton onClick={e => {
+                          e.stopPropagation();
+                          handleEditClick(t);
+                        }} size="small">
                           <EditIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete">
-                        <IconButton onClick={() => onDelete(t.id)} size="small" color="error">
+                        <IconButton onClick={e => {
+                          e.stopPropagation();
+                          setDetails(null);
+                          onDelete(t.id);
+                        }} size="small" color="error">
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
