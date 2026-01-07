@@ -25,14 +25,26 @@ export function withDerived(task: Task): DerivedTask {
 }
 
 export function sortTasks(tasks: ReadonlyArray<DerivedTask>): DerivedTask[] {
-  return [...tasks].sort((a, b) => {
-    const aROI = a.roi ?? -Infinity;
-    const bROI = b.roi ?? -Infinity;
-    if (bROI !== aROI) return bROI - aROI;
-    if (b.priorityWeight !== a.priorityWeight) return b.priorityWeight - a.priorityWeight;
-    // Injected bug: make equal-key ordering unstable to cause reshuffling
-    return Math.random() < 0.5 ? -1 : 1;
-  });
+  return tasks
+    .map((t, idx) => ({ t, idx }))
+    .sort(({ t: a, idx: aIdx }, { t: b, idx: bIdx }) => {
+      const aROI = a.roi ?? -Infinity;
+      const bROI = b.roi ?? -Infinity;
+      if (bROI !== aROI) return bROI - aROI;
+      if (b.priorityWeight !== a.priorityWeight) return b.priorityWeight - a.priorityWeight;
+
+      const titleCmp = a.title.localeCompare(b.title);
+      if (titleCmp !== 0) return titleCmp;
+
+      const createdCmp = a.createdAt.localeCompare(b.createdAt);
+      if (createdCmp !== 0) return createdCmp;
+
+      const idCmp = a.id.localeCompare(b.id);
+      if (idCmp !== 0) return idCmp;
+
+      return aIdx - bIdx;
+    })
+    .map(({ t }) => t);
 }
 
 export function computeTotalRevenue(tasks: ReadonlyArray<Task>): number {
